@@ -1,12 +1,15 @@
-# Step 1: Use Maven to build the project
-FROM maven:3.8.6-openjdk-17 AS build
+# Use a stable Maven + JDK image
+FROM maven:3.9-eclipse-temurin-17 AS build
+
 WORKDIR /app
 COPY . .
 RUN mvn clean install
 
-# Step 2: Use JDK to run the built jar
-FROM openjdk:17-jdk-slim
+# Use JDK-only image for running the app
+FROM eclipse-temurin:17-jdk
+
 WORKDIR /app
 COPY --from=build /app/target/*.jar app.jar
+
 EXPOSE 8080
 CMD ["java", "-jar", "app.jar"]
